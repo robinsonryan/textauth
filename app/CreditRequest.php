@@ -8,6 +8,6 @@ class CreditRequest extends Model
 {
     //
     protected $fillable = [
-        'name', 'phone', 'message'
+        'name', 'phone', 'message', 'request_uuid', 'request_response'
     ];
 }

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Input;
 use Request;
-
+use User;
 use App\Http\Requests;
 use Plivo\RestAPI;
 use App\CreditRequest;
@@ -19,33 +18,30 @@ class MessagesController extends Controller
     }
 
     public function index(){
+        return "this works";
         return view('messages.index');
     }
 
     public function send(){
         $input = Request::all();
-        $messages = ["Hey {$input['name']}, Altius Mortgage has received your loan application, but we need your permission to access your credit report.",'Reply YES to to consent, NO to decline.'];
 
         $creditRequest = new CreditRequest($input);
-        $creditRequest->message = implode('',$messages);
 
         //send message
-        $params = array(
+        $params = [
             'src' => config('services.plivo.number'), // Sender's phone number with country code
             'dst' => '1'.$input['phone'], // Receiver's phone number with country code
-            'text' => $messages[0] // SMS text message
-        );
-
+            'text' => sprintf(config('textauth.message'),$input['name'],'Ryan Robinson', 'Altius Mortgage') // SMS text message
+        ];
+        dd($params);
         $response = $this->messenger->send_message($params);
-        //TODO:handle errors;
-        $params['text'] = $messages[1];
-
-        $response = $this->messenger->send_message($params);
-        //TODO:handle errors;
-        //on success log to requests
-        $creditRequest->save();
-        //return success response
-        //redirect to success screen
+        if($response['status'] === 200) {
+            $creditRequest->request_uuid = $response['message_uuid'][0];
+            $creditRequest->request_response = json_encode($response);
+        } else {
+            //TODO: log error
+            //text sender about error
+        }
 
         return $response;
     }

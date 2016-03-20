@@ -38,6 +38,6 @@ return [
         'id' => 'MAMJG0ODRKZJDKODLLYJ',
         'token' => 'OTBhNTgyZTMwODU2NTc3MGQ1MTA1YjljZWUyZDVm',
         'number' => '16622606878',
-    ],
+    ]
 
 ];
